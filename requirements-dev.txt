@@ -1,0 +1,30 @@
+# Runtime requirements
+--requirement requirements.txt
+
+# Testing
+pytest==2.5.1
+py==1.4.19
+tox
+psycopg2
+PyMySQL
+
+# Linting
+flake8==2.1.0
+pep8==1.4.6
+pyflakes==0.7.3
+
+# Documentation
+Sphinx==1.2
+sphinx-rtd-theme
+sphinxcontrib-napoleon
+docutils==0.11
+Jinja2==2.7.1
+MarkupSafe==0.18
+Pygments==1.6
+ipython==2.3.1
+
+# Miscellaneous
+Paver==1.2.1
+colorama==0.2.7
+bumpr
+requests
