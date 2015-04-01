@@ -6,7 +6,7 @@ gnucash utilities
 The GnuCash utilities is a set of utilities built on top of piecash, a python package to work with GnuCash books.
 
 :Documentation: http://gnucash-utilities.readthedocs.org.
-:Google group: https://groups.google.com/d/forum/gnucash-utilities (gnucash-utilities@googlegroups.com)
+:Google group: https://groups.google.com/d/forum/piecash (piecash@googlegroups.com)
 :Github: https://github.com/sdementen/gnucash-utilities
 
 
