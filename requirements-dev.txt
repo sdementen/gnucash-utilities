@@ -16,7 +16,7 @@ pyflakes==0.7.3
 # Documentation
 Sphinx==1.2
 sphinx-rtd-theme
-sphinxcontrib-napoleon
+sphinxcontrib-napoleon==0.2.11
 docutils==0.11
 Jinja2==2.7.1
 MarkupSafe==0.18
