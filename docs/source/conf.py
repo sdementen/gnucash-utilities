@@ -28,7 +28,7 @@ if os.path.exists("../example_file.gnucash"):
     os.remove("../example_file.gnucash")
 
 # Import project metadata
-from gnucash-utilities import metadata
+import metadata
 
 # -- General configuration ----------------------------------------------------
 

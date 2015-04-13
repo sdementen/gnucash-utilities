@@ -1,2 +1,2 @@
 
-print("test script")
+print("This is a test script")
