@@ -4,4 +4,4 @@ What's new
 In development
 ~~~~~~~~~~~~~~
 
-- Empty
+- initial setup of project
