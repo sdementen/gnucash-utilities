@@ -3,7 +3,7 @@ gnucash utilities
 
 |build-status| |docs|
 
-The GnuCash utilities is a set of utilities built on top of `piecash <https://github.com/sdementen>`_, a python package to work with GnuCash books.
+The GnuCash utilities is a set of utilities built on top of `piecash <https://github.com/sdementen/piecash>`_, a python package to work with GnuCash books.
 
 It will eventually consist of scripts to:
  - import/export gnucash books to various format (csv, QIF, ledger, ...)
