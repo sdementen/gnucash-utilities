@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
-
 import os
 import sys
 import imp
@@ -16,6 +15,7 @@ if 'check_output' not in dir(subprocess):
         if proc.returncode != 0:
             raise subprocess.CalledProcessError(args)
         return out
+
 
     subprocess.check_output = check_output
 
@@ -46,15 +46,15 @@ PYTEST_FLAGS = ['--doctest-modules']
 #
 # from piecash import metadata
 #
-# However, when we do this, we also import `piecash/__init__.py'. If this
+# However, when we do this, we also import `metadata.py'. If this
 # imports names from some other modules and these modules have third-party
 # dependencies that need installing (which happens after this file is run), the
 # script will crash. What we do instead is to load the metadata module by path
 # instead, effectively side-stepping the dependency problem. Please make sure
 # metadata has no dependencies, otherwise they will need to be added to
 # the setup_requires keyword.
-metadata = imp.load_source(
-    'metadata', os.path.join(CODE_DIRECTORY, 'metadata.py'))
+metadata = imp.load_source('metadata', 'metadata.py')
+print(metadata)
 
 
 # # Miscellaneous helper functions
@@ -222,7 +222,6 @@ python_version_specific_requires = []
 if sys.version_info < (2, 7) or (3, 0) <= sys.version_info < (3, 3):
     python_version_specific_requires.append('argparse')
 
-
 # See here for more options:
 # <http://pythonhosted.org/setuptools/setuptools.html>
 
@@ -260,6 +259,7 @@ setup_dict = dict(
     packages=find_packages(exclude=(TESTS_DIRECTORY, DATA_DIRECTORY)),
     install_requires=[
                          'piecash',
+                         'click',
                      ] + python_version_specific_requires,
     # Allow tests to be run with `python setup.py test'.
     tests_require=[
@@ -267,7 +267,10 @@ setup_dict = dict(
         'mock',
         'py',
     ],
-    scripts=['scripts/gc-csv.py'],
+    entry_points='''
+    [console_scripts]
+    gc-csv=scripts.csv_import_export:import_export
+    ''',
     cmdclass={'test': TestAllCommand},
     zip_safe=False,  # don't use eggs
 )
