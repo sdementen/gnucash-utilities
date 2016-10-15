@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
-import os
-import sys
+
 import imp
+import os
 import subprocess
+import sys
 
 # # Python 2.6 subprocess.check_output compatibility. Thanks Greg Hewgill!
 if 'check_output' not in dir(subprocess):
@@ -260,6 +261,7 @@ setup_dict = dict(
     install_requires=[
                          'piecash',
                          'click',
+                         'jinja2',
                      ] + python_version_specific_requires,
     # Allow tests to be run with `python setup.py test'.
     tests_require=[
@@ -270,6 +272,7 @@ setup_dict = dict(
     entry_points='''
     [console_scripts]
     gc-csv=scripts.csv_import_export:import_export
+    gc-A47=scripts.export_norme_A47:import_export
     ''',
     cmdclass={'test': TestAllCommand},
     zip_safe=False,  # don't use eggs
