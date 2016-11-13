@@ -1,8 +1,23 @@
+#!/usr/bin/env python
 import glob
-import importlib
 import os
+import sys
 
 from piecash_utilities import update_config_user, get_user_config_path
+
+if sys.version_info >= (3,0):
+    import importlib
+
+
+    def load_module(file_path):
+        return importlib.machinery.SourceFileLoader("mod", file_path).load_module()
+else:
+    import imp
+
+
+    def load_module(file_path):
+        return imp.load_source("mod", file_path)
+
 
 def main():
     lines_report = []
@@ -10,7 +25,7 @@ def main():
     for p in glob.glob(os.path.join(user_path, "report_*.py")):
         path_name, ext = os.path.splitext(p)
         name = os.path.basename(path_name)
-        mod = importlib.machinery.SourceFileLoader("mod", p).load_module()
+        mod = load_module(p)
 
         if hasattr(mod, "generate_report"):
             project = mod.generate_report.project
@@ -24,6 +39,7 @@ def main():
             lines_report.append('(load (gnc-build-dotgnucash-path "{}"))'.format(scm_name))
 
     update_config_user(lines_report)
+
 
 if __name__ == '__main__':
     main()

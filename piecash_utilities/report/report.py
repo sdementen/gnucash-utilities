@@ -6,10 +6,6 @@ import sys
 from piecash_utilities.config import get_latest_file
 from .options import Option
 
-try:
-    import winreg
-except ImportError:
-    import _winreg as winreg
 
 
 class Report:

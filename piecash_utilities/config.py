@@ -1,10 +1,14 @@
 import os
 import sys
-import winreg
 
 
 def get_latest_file():
     if sys.platform.startswith("win"):
+        try:
+            import winreg
+        except ImportError:
+            import _winreg as winreg
+
         explorer = winreg.OpenKey(
             winreg.HKEY_CURRENT_USER,
             "Software\\GSettings\\org\\gnucash\\history"
@@ -16,10 +20,10 @@ def get_latest_file():
 
 
 def get_user_config_path():
-    if sys.platform.startswith("win"):
-        return os.path.abspath(os.path.join(os.environ["HOME"], ".gnucash"))
-    elif sys.platform.startswith("linux"):
-        return os.path.abspath("~/.gnucash")
+    from os.path import expanduser
+    home = expanduser("~")
+    if sys.platform.startswith("win") or sys.platform.startswith("linux"):
+        return os.path.join(home, ".gnucash")
     else:
         raise NotImplemented("not yet implemented for sys.platform = '{}'".format(sys.platform))
 

@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 
-import os
-import sys
 import imp
+import os
 import subprocess
+import sys
 
 # # Python 2.6 subprocess.check_output compatibility. Thanks Greg Hewgill!
 from os.path import join as pjoin, splitext, split as psplit
-from distutils.core import setup
 from distutils.command.install_scripts import install_scripts
 from distutils import log
 
@@ -21,6 +20,7 @@ if 'check_output' not in dir(subprocess):
         if proc.returncode != 0:
             raise subprocess.CalledProcessError(args)
         return out
+
 
     subprocess.check_output = check_output
 
@@ -227,21 +227,19 @@ python_version_specific_requires = []
 if sys.version_info < (2, 7) or (3, 0) <= sys.version_info < (3, 3):
     python_version_specific_requires.append('argparse')
 
-
-
 BAT_TEMPLATE = \
-r"""@echo off
-REM wrapper to use shebang first line of {FNAME}
-set mypath=%~dp0
-set pyscript="%mypath%{FNAME}"
-set /p line1=<%pyscript%
-if "%line1:~0,2%" == "#!" (goto :goodstart)
-echo First line of %pyscript% does not start with "#!"
-exit /b 1
-:goodstart
-set py_exe=%line1:~2%
-call "%py_exe%" %pyscript% %*
-"""
+    r"""@echo off
+    REM wrapper to use shebang first line of {FNAME}
+    set mypath=%~dp0
+    set pyscript="%mypath%{FNAME}"
+    set /p line1=<%pyscript%
+    if "%line1:~0,2%" == "#!" (goto :goodstart)
+    echo First line of %pyscript% does not start with "#!"
+    exit /b 1
+    :goodstart
+    set py_exe=%line1:~2%
+    call "%py_exe%" %pyscript% %*
+    """
 
 
 class my_install_scripts(install_scripts):
@@ -268,6 +266,7 @@ class my_install_scripts(install_scripts):
                 continue
             with open(bat_file, 'wt') as fobj:
                 fobj.write(bat_contents)
+
 
 # See here for more options:
 # <http://pythonhosted.org/setuptools/setuptools.html>
@@ -304,12 +303,13 @@ setup_dict = dict(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     packages=find_packages(exclude=(TESTS_DIRECTORY, DATA_DIRECTORY)),
-    data_files=[('piecash_utilities/report',['piecash_utilities/report/python_report_template.scm',
-                                             'piecash_utilities/report/report_example.html',
+    data_files=[('piecash_utilities/report', ['piecash_utilities/report/python_report_template.scm',
+                                              'piecash_utilities/report/report_example.html',
 
-                                             ])],
+                                              ])],
     install_requires=[
                          'piecash',
+                         'jinja2'
                      ] + python_version_specific_requires,
     # Allow tests to be run with `python setup.py test'.
     tests_require=[

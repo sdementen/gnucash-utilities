@@ -1,5 +1,5 @@
+#!/usr/bin/env python
 import os
-import shutil
 import sys
 
 from piecash_utilities import generate_sample_report_html
