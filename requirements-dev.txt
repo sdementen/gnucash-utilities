@@ -18,7 +18,6 @@ Sphinx==1.2
 sphinx-rtd-theme
 sphinxcontrib-napoleon
 docutils==0.11
-Jinja2==2.7.1
 MarkupSafe==0.18
 Pygments==1.6
 ipython==2.3.1
