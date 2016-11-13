@@ -20,6 +20,13 @@ Contents:
 
    doc/doc.rst
 
+The complete api documentation (apidoc) :
+
+.. toctree::
+   :maxdepth: 1
+
+   api/modules.rst
+
 Indices and tables
 ==================
 

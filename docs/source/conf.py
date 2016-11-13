@@ -28,7 +28,7 @@ if os.path.exists("../example_file.gnucash"):
     os.remove("../example_file.gnucash")
 
 # Import project metadata
-import metadata
+from piecash_utilities import metadata
 
 # -- General configuration ----------------------------------------------------
 
@@ -120,7 +120,7 @@ pygments_style = 'sphinx'
 # on_rtd is whether we are on readthedocs.org, this line of code grabbed from docs.readthedocs.org
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
-if not on_rtd:  # only import and set the theme if we're building docs locally
+if not on_rtd or True:  # only import and set the theme if we're building docs locally
     # The theme to use for HTML and HTML Help pages.  See the documentation for
     # a list of builtin themes.
     import sphinx_rtd_theme

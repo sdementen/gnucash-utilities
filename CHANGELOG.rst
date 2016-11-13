@@ -4,4 +4,5 @@ What's new
 In development
 ~~~~~~~~~~~~~~
 
-- initial setup of project
+- system to add python report to gnucash
+

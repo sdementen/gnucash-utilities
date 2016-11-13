@@ -7,6 +7,10 @@ import subprocess
 import sys
 
 # # Python 2.6 subprocess.check_output compatibility. Thanks Greg Hewgill!
+from os.path import join as pjoin, splitext, split as psplit
+from distutils.command.install_scripts import install_scripts
+from distutils import log
+
 if 'check_output' not in dir(subprocess):
     def check_output(cmd_args, *args, **kwargs):
         proc = subprocess.Popen(
@@ -47,15 +51,15 @@ PYTEST_FLAGS = ['--doctest-modules']
 #
 # from piecash import metadata
 #
-# However, when we do this, we also import `metadata.py'. If this
+# However, when we do this, we also import `piecash/__init__.py'. If this
 # imports names from some other modules and these modules have third-party
 # dependencies that need installing (which happens after this file is run), the
 # script will crash. What we do instead is to load the metadata module by path
 # instead, effectively side-stepping the dependency problem. Please make sure
 # metadata has no dependencies, otherwise they will need to be added to
 # the setup_requires keyword.
-metadata = imp.load_source('metadata', 'metadata.py')
-print(metadata)
+metadata = imp.load_source(
+    'metadata', os.path.join(CODE_DIRECTORY, 'metadata.py'))
 
 
 # # Miscellaneous helper functions
@@ -223,6 +227,47 @@ python_version_specific_requires = []
 if sys.version_info < (2, 7) or (3, 0) <= sys.version_info < (3, 3):
     python_version_specific_requires.append('argparse')
 
+BAT_TEMPLATE = \
+    r"""@echo off
+    REM wrapper to use shebang first line of {FNAME}
+    set mypath=%~dp0
+    set pyscript="%mypath%{FNAME}"
+    set /p line1=<%pyscript%
+    if "%line1:~0,2%" == "#!" (goto :goodstart)
+    echo First line of %pyscript% does not start with "#!"
+    exit /b 1
+    :goodstart
+    set py_exe=%line1:~2%
+    call "%py_exe%" %pyscript% %*
+    """
+
+
+class my_install_scripts(install_scripts):
+    def run(self):
+        install_scripts.run(self)
+        if not os.name == "nt":
+            return
+        for filepath in self.get_outputs():
+            # If we can find an executable name in the #! top line of the script
+            # file, make .bat wrapper for script.
+            with open(filepath, 'rt') as fobj:
+                first_line = fobj.readline()
+            # if not (first_line.startswith('#!') and
+            #         'python' in first_line.lower()):
+            #     log.info("No #!python executable found, skipping .bat "
+            #                 "wrapper")
+            #     continue
+            pth, fname = psplit(filepath)
+            froot, ext = splitext(fname)
+            bat_file = pjoin(pth, froot + '.bat')
+            bat_contents = BAT_TEMPLATE.replace('{FNAME}', fname)
+            log.info("Making %s wrapper for %s" % (bat_file, filepath))
+            if self.dry_run:
+                continue
+            with open(bat_file, 'wt') as fobj:
+                fobj.write(bat_contents)
+
+
 # See here for more options:
 # <http://pythonhosted.org/setuptools/setuptools.html>
 
@@ -242,26 +287,27 @@ setup_dict = dict(
     # Find a list of classifiers here:
     # <http://pypi.python.org/pypi?%3Aaction=list_classifiers>
     classifiers=[
-        'Development Status :: 1 - Planning',
+        'Development Status :: 4 - Beta',
         'Environment :: Console',
         'Intended Audience :: Developers',
         'Intended Audience :: Financial and Insurance Industry',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Topic :: Office/Business',
         'Topic :: Office/Business :: Financial',
         'Topic :: Office/Business :: Financial :: Accounting',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     packages=find_packages(exclude=(TESTS_DIRECTORY, DATA_DIRECTORY)),
+    data_files=[('piecash_utilities/report', ['piecash_utilities/report/python_report_template.scm',
+                                              'piecash_utilities/report/report_example.html',
+
+                                              ])],
     install_requires=[
                          'piecash',
-                         'click',
-                         'jinja2',
+                         'jinja2'
                      ] + python_version_specific_requires,
     # Allow tests to be run with `python setup.py test'.
     tests_require=[
@@ -269,12 +315,13 @@ setup_dict = dict(
         'mock',
         'py',
     ],
-    entry_points='''
-    [console_scripts]
-    gc-csv=scripts.csv_import_export:import_export
-    gc-A47=scripts.export_norme_A47:import_export
-    ''',
-    cmdclass={'test': TestAllCommand},
+    scripts=['scripts/gc_test.py',
+             'scripts/gc_report.py',
+             'scripts/gc_report_create.py',
+
+             ],
+    cmdclass={'test': TestAllCommand,
+              'install_scripts': my_install_scripts},
     zip_safe=False,  # don't use eggs
 )
 
