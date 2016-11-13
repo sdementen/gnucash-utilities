@@ -8,7 +8,7 @@ Information describing the project.
 package = 'gnucash-utilities'
 project = "Set of python scripts to work with GnuCash books"
 project_no_spaces = project.replace(' ', '')
-version = '0.0.1'
+version = '0.1.0'
 description = 'Set of python scripts to work with GnuCash books.'
 authors = ['sdementen']
 authors_string = ', '.join(authors)
