@@ -1,7 +1,45 @@
-name: piecash35s
+name: piecash3
 dependencies:
-- python>=3.5
-- jinja2
+- jinja2=2.8=py35_1
+- markupsafe=0.23=py35_2
+- openssl=1.0.2j=0
+- pip=9.0.1=py35_0
+- python=3.5.2=0
+- readline=6.2=2
+- setuptools=27.2.0=py35_0
+- sqlite=3.13.0=0
+- tk=8.5.18=0
+- wheel=0.29.0=py35_0
+- xz=5.2.2=0
+- zlib=1.2.8=3
 - pip:
-  - piecash
-  - -rrequirements-dev.txt
+  - bumpr==0.2.1
+  - colorama==0.2.7
+  - docutils==0.11
+  - enum-compat==0.0.2
+  - flake8==2.1.0
+  - ipython==2.3.1
+  - mccabe==0.5.2
+  - paver==1.2.1
+  - pep8==1.4.6
+  - piecash==0.10.2
+  - pluggy==0.4.0
+  - pockets==0.3
+  - psycopg2==2.6.2
+  - py==1.4.19
+  - pyflakes==0.7.3
+  - pygments==1.6
+  - pymysql==0.7.9
+  - pytest==2.5.1
+  - pytz==2016.7
+  - requests==2.11.1
+  - six==1.10.0
+  - sphinx==1.2
+  - sphinx-rtd-theme==0.1.9
+  - sphinxcontrib-napoleon==0.5.3
+  - sqlalchemy==1.1.3
+  - sqlalchemy-utils==0.32.9
+  - tox==2.4.1
+  - tzlocal==1.3
+  - virtualenv==15.0.3
+
