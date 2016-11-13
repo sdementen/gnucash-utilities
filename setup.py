@@ -41,7 +41,7 @@ except ImportError:
 sys.path.append('.')
 
 # # Constants
-CODE_DIRECTORY = '.'
+CODE_DIRECTORY = 'piecash_utilities'
 DOCS_DIRECTORY = 'docs'
 TESTS_DIRECTORY = 'tests'
 DATA_DIRECTORY = 'gnucash_books'
