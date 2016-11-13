@@ -4,4 +4,5 @@ What's new
 In development
 ~~~~~~~~~~~~~~
 
-- Empty
+- system to add python report to gnucash
+
