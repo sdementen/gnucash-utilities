@@ -1,7 +1,7 @@
 :tocdepth: 4
 
 Welcome to the gnucash-utilities documentation!
-=====================================
+===============================================
 
 :Release: |version|
 :Date: |today|

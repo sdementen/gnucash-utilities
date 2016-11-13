@@ -1,0 +1,4 @@
+a_number|3
+a_str|with a default value
+a_date|1479026587
+another_number|3

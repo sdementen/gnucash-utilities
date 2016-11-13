@@ -2,6 +2,7 @@ import hashlib
 import inspect
 import os
 import sys
+import traceback
 
 from piecash_utilities.config import get_latest_file
 from .options import Option
@@ -86,3 +87,18 @@ def report(options_default_section,
         return wrapped
 
     return process_function
+
+def execute_report(generate_report):
+    try:
+        s = generate_report()
+        print(s)
+    except Exception as e:
+        mystdout = os.fdopen(sys.stdout.fileno(), 'w')
+        owrite = mystdout.write
+        owrite('<html><head><style>pre {font-family: arial;}</style></head><body>')
+        def write(text):
+            text = "".join("<pre>{}</pre>".format(l) for l in text.split("\n"))
+            owrite(text)
+        mystdout.write = write
+        traceback.print_exc(file=mystdout)
+        owrite("</body></html>")
