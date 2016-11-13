@@ -8,7 +8,6 @@ from piecash_utilities.config import get_latest_file
 from .options import Option
 
 
-
 class Report:
     name = ""
     title = ""
@@ -39,18 +38,20 @@ class Report:
         env = jinja2.Environment(loader=jinja2.PackageLoader(__name__, '.'))
         scm_view = env.get_template("python_report_template.scm").render(
             project=self,
-            python_interpreter='"' + repr("'" + sys.executable)[2:].replace("python.exe","pythonw.exe"),
+            python_interpreter='"' + repr("'" + sys.executable)[2:].replace("python.exe", "pythonw.exe"),
         )
         return scm_view
 
 
 def generate_sample_report_python():
-    with open(os.path.join(os.path.dirname(__file__),"report_example.py")) as f:
+    with open(os.path.join(os.path.dirname(__file__), "report_example.py")) as f:
         return f.read()
 
+
 def generate_sample_report_html():
-    with open(os.path.join(os.path.dirname(__file__),"report_example.html")) as f:
+    with open(os.path.join(os.path.dirname(__file__), "report_example.html")) as f:
         return f.read()
+
 
 def report(options_default_section,
            title,
@@ -88,17 +89,21 @@ def report(options_default_section,
 
     return process_function
 
+
 def execute_report(generate_report):
     try:
         s = generate_report()
         print(s)
     except Exception as e:
+        # report the trace in html output
         mystdout = os.fdopen(sys.stdout.fileno(), 'w')
-        owrite = mystdout.write
-        owrite('<html><head><style>pre {font-family: arial;}</style></head><body>')
-        def write(text):
+        original_write = mystdout.write
+        original_write('<html><head><style>pre {font-family: arial;}</style></head><body>')
+
+        def wrapped_write(text):
             text = "".join("<pre>{}</pre>".format(l) for l in text.split("\n"))
-            owrite(text)
-        mystdout.write = write
+            original_write(text)
+
+        mystdout.write = wrapped_write
         traceback.print_exc(file=mystdout)
-        owrite("</body></html>")
+        original_write("</body></html>")

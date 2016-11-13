@@ -5,13 +5,16 @@ import jinja2
 
 
 class Option:
-    type = ""
-    section = ""
-    name = ""
-    sort_tag = ""
-    documentation_string = ""
-    default_value = ""
+    """An option to be used in a report
 
+    Attributes:
+        type (str): the type of the option of the form 'gnc:make-number-range-option'
+        section (str): the section/tab where the option should appear in the option dialog
+        sort_tag (str): a string defining the sort order in the tab
+        documentation_string (str): the doc string of the option
+        default_value (str): the default value of the option
+        name (str): the name of the variable
+    """
     def __init__(self, type, section, sort_tag, documentation_string, default_value, name=None):
         self.type = type
         self.section = section
@@ -37,9 +40,7 @@ class DateOption(Option):
         self.is_datetime = is_datetime
 
     def render_serialise(self):
-        return jinja2.Template("""
-            (cadr (op-value "{{option.section}}" "{{option.name}}"))
-            """).render(option=self)
+        return jinja2.Template("""(cadr (op-value "{{option.section}}" "{{option.name}}"))""").render(option=self)
 
     def parse(self, value):
         return datetime.datetime.fromtimestamp(ast.literal_eval(value))
@@ -64,7 +65,7 @@ class RangeOption(Option):
         self.step_size = step_size
 
     def render_scheme(self):
-        return jinja2.Template("""    (add-option
+        return jinja2.Template("""(add-option
        ({{ option.type }}
       (N_ "{{option.section}}") (N_ "{{option.name}}")
       "{{option.sort_tag}}" (N_ "{{option.documentation_string}}")
