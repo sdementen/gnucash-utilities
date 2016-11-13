@@ -1,0 +1,7 @@
+name: piecash35s
+dependencies:
+- python>=3.5
+- jinja2
+- pip:
+  - piecash
+  - -rrequirements-dev.txt
