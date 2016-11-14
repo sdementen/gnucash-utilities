@@ -36,9 +36,6 @@ class Report:
 
     def generate_scm(self):
         import jinja2
-        # print(__name__)
-        # print(template_path)
-        # env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_path))
         scm_view = jinja2.Template(retrieve_template_scm()).render(
             project=self,
             python_interpreter='"' + repr("'" + sys.executable)[2:].replace("python.exe", "pythonw.exe"),
@@ -47,8 +44,6 @@ class Report:
 
 
 def retrieve_template_scm():
-    print(os.path.join(template_path, "python_report_template.scm"))
-    print(template_path)
     with open(os.path.join(template_path, "python_report_template.scm")) as f:
         return f.read()
 
