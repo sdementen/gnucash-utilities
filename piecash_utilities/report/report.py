@@ -35,7 +35,7 @@ class Report:
     def generate_scm(self):
         import jinja2
 
-        env = jinja2.Environment(loader=jinja2.PackageLoader(__name__, '.'))
+        env = jinja2.Environment(loader=jinja2.PackageLoader(__name__, '..', 'data'))
         scm_view = env.get_template("python_report_template.scm").render(
             project=self,
             python_interpreter='"' + repr("'" + sys.executable)[2:].replace("python.exe", "pythonw.exe"),
@@ -44,12 +44,12 @@ class Report:
 
 
 def generate_sample_report_python():
-    with open(os.path.join(os.path.dirname(__file__), "report_example.py")) as f:
+    with open(os.path.join(os.path.dirname(__file__), "..", "data", "report_example.py")) as f:
         return f.read()
 
 
 def generate_sample_report_html():
-    with open(os.path.join(os.path.dirname(__file__), "report_example.html")) as f:
+    with open(os.path.join(os.path.dirname(__file__), "..", "data", "report_example.html")) as f:
         return f.read()
 
 
