@@ -20,7 +20,7 @@ include setup.py
 include tox.ini
 
 # include examples
-include piecash_utilities/gnucash_books/*
 include scripts/*
+include piecash_utilities/gnucash_books/*
 include piecash_utilities/report_examples/*
-include piecash_utilities/data/*
+include piecash_utilities/templates/*

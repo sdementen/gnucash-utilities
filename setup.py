@@ -304,10 +304,6 @@ setup_dict = dict(
                                     DATA_DIRECTORY,
                                     )),
     include_package_data=True,
-    # data_files=[(". ,[DATA_DIRECTORY])],
-# , [DATA_DIRECTORY + "/*",
-#
-#                                               ])],
     install_requires=[
                          'piecash',
                          'jinja2'

@@ -4,8 +4,10 @@ import os
 import sys
 import traceback
 
-from piecash_utilities.config import get_latest_file
 from .options import Option
+from ..config import get_latest_file
+
+template_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "templates"))
 
 
 class Report:
@@ -34,22 +36,30 @@ class Report:
 
     def generate_scm(self):
         import jinja2
-
-        env = jinja2.Environment(loader=jinja2.PackageLoader(__name__, '..', 'data'))
-        scm_view = env.get_template("python_report_template.scm").render(
+        # print(__name__)
+        # print(template_path)
+        # env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_path))
+        scm_view = jinja2.Template(retrieve_template_scm()).render(
             project=self,
             python_interpreter='"' + repr("'" + sys.executable)[2:].replace("python.exe", "pythonw.exe"),
         )
         return scm_view
 
 
+def retrieve_template_scm():
+    print(os.path.join(template_path, "python_report_template.scm"))
+    print(template_path)
+    with open(os.path.join(template_path, "python_report_template.scm")) as f:
+        return f.read()
+
+
 def generate_sample_report_python():
-    with open(os.path.join(os.path.dirname(__file__), "..", "data", "report_example.py")) as f:
+    with open(os.path.join(template_path, "report_example.py")) as f:
         return f.read()
 
 
 def generate_sample_report_html():
-    with open(os.path.join(os.path.dirname(__file__), "..", "data", "report_example.html")) as f:
+    with open(os.path.join(template_path, "report_example.html")) as f:
         return f.read()
 
 
