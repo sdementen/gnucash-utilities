@@ -112,3 +112,4 @@ def execute_report(generate_report):
         mystdout.write = wrapped_write
         traceback.print_exc(file=mystdout)
         original_write("</body></html>")
+        mystdout.flush()
