@@ -22,21 +22,24 @@ else:
 def main():
     lines_report = []
     user_path = get_user_config_path()
-    for p in glob.glob(os.path.join(user_path, "report_*.py")):
-        path_name, ext = os.path.splitext(p)
-        name = os.path.basename(path_name)
-        mod = load_module(p)
+    for p in glob.glob(os.path.join(user_path, "report_*/")):
+        # p is a folder $GNUCASH_USER_FOLDER/name_of_report/
+        # name = name_of_report
+        _,  name = os.path.split(os.path.dirname(p))
+
+        # load the module $GNUCASH_USER_FOLDER/name_of_report/name_of_report.py
+        mod = load_module(os.path.join(p, name + ".py"))
 
         if hasattr(mod, "generate_report"):
             project = mod.generate_report.project
-            project.python_script = name + ext
+            project.python_script = os.path.join(name, name + ".py")
 
             scm_view = project.generate_scm()
             scm_name = name + ".scm"
             print("generate", name)
-            with open(os.path.join(user_path, scm_name), "w") as f:
+            with open(os.path.join(user_path, name,scm_name), "w") as f:
                 f.write(scm_view)
-            lines_report.append('(load (gnc-build-dotgnucash-path "{}"))'.format(scm_name))
+            lines_report.append('(load (gnc-build-dotgnucash-path "{scm_name}"))'.format(scm_name=os.path.join(name,scm_name)))
 
     update_config_user(lines_report)
 
