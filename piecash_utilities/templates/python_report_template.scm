@@ -61,7 +61,9 @@
 
     (define (start-program)
       (set! program (gnc-spawn-process-async
-                     (list {{python_interpreter}} (gnc-build-dotgnucash-path "{{ project.python_script }}") "execute") ;; (gnc:session-get-url (gnc-get-current-session)))
+                     (list {{python_interpreter}}
+                           (gnc-build-dotgnucash-path "{{ project.python_script }}")
+                           (qof-session-get-url (gnc-get-current-session)))
                      #t)))
 
     (define (read-port port)
