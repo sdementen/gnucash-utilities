@@ -122,6 +122,7 @@ def output_trace_html(exc_info):
 def execute_report(generate_report, book_url):
     try:
         s = generate_report(book_url)
+        print(s)
     except sqlalchemy.exc.DatabaseError as e:
         print("File {} is not an sqlite file. Check that you saved your gnucash book with the sqlite3 data format.".format(book_url))
     except Exception as e:
