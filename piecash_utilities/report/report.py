@@ -5,7 +5,6 @@ import sys
 import traceback
 
 from .options import Option
-from ..config import get_latest_file
 
 template_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "templates"))
 
@@ -79,14 +78,20 @@ def report(options_default_section,
                 param.annotation.name = name
                 options.append(param.annotation)
 
-        def wrapped():
+        def wrapped(book_url):
             dct = {}
             input_options = sys.stdin.readlines()
             for option, option_meta in zip(input_options, options):
                 var, value = option.split("|")
                 dct[var] = option_meta.parse(value)
 
-            book_url = get_latest_file()
+            # convert path given by gnucash to URI usable by piecash
+            book_url = (book_url
+                        .replace("file://", "sqlite:///")
+                        # .replace("postgres://", "postgres:///")
+                        # .replace("mysql://", "mysql+pymysql://")  # to use pymysql instead of
+                        )
+
             return f(book_url, **dct)
 
         wrapped.project = p
@@ -95,9 +100,9 @@ def report(options_default_section,
     return process_function
 
 
-def execute_report(generate_report):
+def execute_report(generate_report, book_url):
     try:
-        s = generate_report()
+        s = generate_report(book_url)
         print(s)
     except Exception as e:
         # report the trace in html output

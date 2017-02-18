@@ -1,4 +1,5 @@
 import piecash
+import sys
 
 from piecash_utilities.report import report, execute_report
 
@@ -26,4 +27,4 @@ def generate_report(
 
 
 if __name__ == '__main__':
-    execute_report(generate_report)
+    execute_report(generate_report, book_url=sys.argv[1])
