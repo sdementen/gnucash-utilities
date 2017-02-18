@@ -4,6 +4,8 @@ import os
 import sys
 import traceback
 
+import sqlalchemy
+
 from .options import Option
 
 template_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "templates"))
@@ -89,7 +91,7 @@ def report(options_default_section,
             book_url = (book_url
                         .replace("file://", "sqlite:///")
                         # .replace("postgres://", "postgres:///")
-                        # .replace("mysql://", "mysql+pymysql://")  # to use pymysql instead of
+                        .replace("mysql://", "mysql+pymysql://")  # to use pymysql instead of
                         )
 
             return f(book_url, **dct)
@@ -100,21 +102,28 @@ def report(options_default_section,
     return process_function
 
 
+def output_trace_html(exc_info):
+    # report the trace in html output
+    mystdout = os.fdopen(sys.stdout.fileno(), 'w')
+    original_write = mystdout.write
+    original_write('<html><head><style>pre {font-family: arial;}</style></head><body>')
+
+    def wrapped_write(text):
+        text = "".join("<pre>{}</pre>".format(l) for l in text.split("\n"))
+        original_write(text)
+
+    mystdout.write = wrapped_write
+    traceback.print_exception(*exc_info, file=mystdout)
+    original_write("</body></html>")
+    mystdout.flush()
+
+
+
 def execute_report(generate_report, book_url):
     try:
         s = generate_report(book_url)
-        print(s)
+    except sqlalchemy.exc.DatabaseError as e:
+        print("File {} is not an sqlite file. Check that you saved your gnucash book with the sqlite3 data format.".format(book_url))
     except Exception as e:
-        # report the trace in html output
-        mystdout = os.fdopen(sys.stdout.fileno(), 'w')
-        original_write = mystdout.write
-        original_write('<html><head><style>pre {font-family: arial;}</style></head><body>')
-
-        def wrapped_write(text):
-            text = "".join("<pre>{}</pre>".format(l) for l in text.split("\n"))
-            original_write(text)
-
-        mystdout.write = wrapped_write
-        traceback.print_exc(file=mystdout)
-        original_write("</body></html>")
-        mystdout.flush()
+        exc_info = sys.exc_info()
+        output_trace_html(exc_info)
