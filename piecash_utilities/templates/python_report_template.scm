@@ -67,10 +67,10 @@
                      #t)))
 
     (define (read-port port)
-        (let iter ((result '()) (chr (read-char port)))
-            (if (eof-object? chr)
-                (list->string result)
-                (iter (append result (list chr)) (read-char port)))))
+        (let iter ((result '()) (line ""))
+             (if (eof-object? line)
+                (string-concatenate-reverse/shared result)
+                (iter (cons line result) (read-line port 'concat)))))
 
     (define (get-sources)
           (let ((results #f))
