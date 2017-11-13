@@ -7,6 +7,7 @@
 (use-modules (gnucash gnc-module))
 (use-modules (gnucash app-utils))
 (use-modules (gnucash gettext))
+(use-modules (ice-9 rdelim))
 (gnc:module-load "gnucash/engine" 0)
 (use-modules (gnucash core-utils))
 
