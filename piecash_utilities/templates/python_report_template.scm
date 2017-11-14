@@ -8,6 +8,10 @@
 (use-modules (gnucash app-utils))
 (use-modules (gnucash gettext))
 (use-modules (ice-9 rdelim))
+(use-modules (web client)
+             (web request)
+             (web response)
+             )
 (gnc:module-load "gnucash/engine" 0)
 (use-modules (gnucash core-utils))
 
@@ -93,6 +97,17 @@
                (force-output to-child)
                (close-output-port to-child)
                (set! results (read-port from-child))
+               (call-with-values
+            	    (lambda () (http-post "http://127.0.0.1:8001"
+                    #:body "hello me"
+                    #:headers (acons 'Accept-Content "text/plain"
+                               (acons 'Accept "text/html"
+                               (acons 'gnc-report "report_boul.report_boul"
+                               (acons 'gnc-book "c:/foo" '()))))))
+
+                    (lambda (res-headers res-body)
+	                        (set! results res-body)))
+
                results)
              (lambda (key . args)
                key))))
