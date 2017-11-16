@@ -48,7 +48,10 @@ def main():
             print("generate", name)
             with open(os.path.join(user_path, name, scm_name), "w") as f:
                 f.write(scm_view)
-            lines_report.append('(load (gnc-build-dotgnucash-path "{scm_name}"))'.format(scm_name=os.path.join(name, scm_name)))
+            
+            #report_path = os.path.join(name, scm_name)
+            report_path = name + "//" + scm_name
+            lines_report.append('(load (gnc-build-dotgnucash-path "{scm_name}"))'.format(scm_name=report_path))
 
     update_config_user(lines_report)
 
