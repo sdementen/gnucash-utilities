@@ -2,7 +2,9 @@
 Documentation
 =============
 
-This project provides a suite of scripts to work on GnuCash files stored in SQL (sqlite3 and Postgres, not tested in MySQL).
+This project aims to provide a suite of scripts to work on GnuCash files stored in SQL
+(sqlite3 and Postgres, not tested in MySQL). It depends on `piecash <https://github.com/sdementen/piecash>`_ to read/write
+gnucash books.
 
 Report creation (Linux and Windows, python >=3.5)
 =================================================
@@ -35,7 +37,7 @@ A simple report
 
 The simplest report has the form of
 
-.. literalinclude:: ../../../report_example/report_simplest.py
+.. literalinclude:: ../../../piecash_utilities/report_example/report_simplest.py
 
 The core reporting logic is defined in the function 'generate_report' that::
 
@@ -58,7 +60,7 @@ A report with options
 
 If you want to define options for your report, you can do it with type annotations as in
 
-.. literalinclude:: ../../../report_example/report_simplest_parameters.py
+.. literalinclude:: ../../../piecash_utilities/report_example/report_simplest_parameters.py
 
 Each option is an additional argument to the 'generate_report' function with its type defined through python type annotations.
 
@@ -74,7 +76,7 @@ A report that access the book
 Most of the report will want to access the gnucash book. You can use piecash to open the book thanks to the 'book_url' argument
 that the 'generate_report' function gets automatically as illustrated in the following example
 
-.. literalinclude:: ../../../report_example/report_simplest_book.py
+.. literalinclude:: ../../../piecash_utilities/report_example/report_simplest_book.py
 
 
 A full fledged example with jinja2 to generate the html
@@ -102,7 +104,7 @@ You can test a report by just running the 'report_name-of-report.py' python file
 
 with inputs being a file like
 
-.. literalinclude:: ../../../report_example/report_inputs.txt
+.. literalinclude:: ../../../piecash_utilities/report_example/report_inputs.txt
 
 The inputs should be in line with the options required by the report.
 
@@ -132,6 +134,6 @@ The python report mechanism works as following:
             a. deserialises the options => option arguments
             b. retrieves the "last open gnucash book" => book_url argument
             c. calls the generate_report function with the arguments which returns an HTML string
-            d. prints the HTML stringto the standard output
+            d. prints the HTML string to the standard output
 
         d. it retrieves the standard output of the python subprocess as the HTML output of the report

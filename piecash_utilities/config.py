@@ -2,28 +2,28 @@ import os
 import sys
 
 
-def get_latest_file():
-    if sys.platform.startswith("win"):
-        try:
-            import winreg
-        except ImportError:
-            import _winreg as winreg
-
-        explorer = winreg.OpenKey(
-            winreg.HKEY_CURRENT_USER,
-            "Software\\GSettings\\org\\gnucash\\history"
-        )
-        value, type = winreg.QueryValueEx(explorer, "file0")
-        return value
-    elif sys.platform.startswith("linux"):
-        import subprocess
-        output_dconf = subprocess.check_output(["dconf", "dump", "/org/gnucash/history/"]).decode()
-        from configparser import ConfigParser
-        conf = ConfigParser()
-        conf.read_string(output_dconf)
-        return conf["/"]["file0"][1:-1]
-    else:
-        raise NotImplemented("not yet implemented for sys.platform = '{}'".format(sys.platform))
+# def get_latest_file():
+#     if sys.platform.startswith("win"):
+#         try:
+#             import winreg
+#         except ImportError:
+#             import _winreg as winreg
+#
+#         explorer = winreg.OpenKey(
+#             winreg.HKEY_CURRENT_USER,
+#             "Software\\GSettings\\org\\gnucash\\history"
+#         )
+#         value, type = winreg.QueryValueEx(explorer, "file0")
+#         return value
+#     elif sys.platform.startswith("linux"):
+#         import subprocess
+#         output_dconf = subprocess.check_output(["dconf", "dump", "/org/gnucash/history/"]).decode()
+#         from configparser import ConfigParser
+#         conf = ConfigParser()
+#         conf.read_string(output_dconf)
+#         return conf["/"]["file0"][1:-1]
+#     else:
+#         raise NotImplemented("not yet implemented for sys.platform = '{}'".format(sys.platform))
 
 
 def get_user_config_path():

@@ -41,10 +41,10 @@ except ImportError:
 sys.path.append('.')
 
 # # Constants
-CODE_DIRECTORY = '.'
+CODE_DIRECTORY = 'piecash_utilities'
 DOCS_DIRECTORY = 'docs'
 TESTS_DIRECTORY = 'tests'
-DATA_DIRECTORY = 'gnucash_books'
+DATA_DIRECTORY = 'piecash_utilities/data'
 PYTEST_FLAGS = ['--doctest-modules']
 
 # Import metadata. Normally this would just be:
@@ -281,7 +281,7 @@ setup_dict = dict(
     url=metadata.url,
     description=metadata.description,
     long_description=read('README.rst'),
-    keywords=['GnuCash', 'python', 'utilities', 'piecash'],
+    keywords=['GnuCash', 'python', 'utilities', 'piecash', 'report'],
     license='MIT',
     platforms='any',
     # Find a list of classifiers here:
@@ -300,11 +300,10 @@ setup_dict = dict(
         'Topic :: Office/Business :: Financial :: Accounting',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
-    packages=find_packages(exclude=(TESTS_DIRECTORY, DATA_DIRECTORY)),
-    data_files=[('piecash_utilities/report', ['piecash_utilities/report/python_report_template.scm',
-                                              'piecash_utilities/report/report_example.html',
-
-                                              ])],
+    packages=find_packages(exclude=(TESTS_DIRECTORY,
+                                    DATA_DIRECTORY,
+                                    )),
+    include_package_data=True,
     install_requires=[
                          'piecash',
                          'jinja2'
@@ -318,7 +317,6 @@ setup_dict = dict(
     scripts=['scripts/gc_test.py',
              'scripts/gc_report.py',
              'scripts/gc_report_create.py',
-
              ],
     cmdclass={'test': TestAllCommand,
               'install_scripts': my_install_scripts},

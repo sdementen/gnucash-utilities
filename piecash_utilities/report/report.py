@@ -4,8 +4,11 @@ import os
 import sys
 import traceback
 
-from piecash_utilities.config import get_latest_file
+import sqlalchemy
+
 from .options import Option
+
+template_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "templates"))
 
 
 class Report:
@@ -34,22 +37,25 @@ class Report:
 
     def generate_scm(self):
         import jinja2
-
-        env = jinja2.Environment(loader=jinja2.PackageLoader(__name__, '.'))
-        scm_view = env.get_template("python_report_template.scm").render(
+        scm_view = jinja2.Template(retrieve_template_scm()).render(
             project=self,
             python_interpreter='"' + repr("'" + sys.executable)[2:].replace("python.exe", "pythonw.exe"),
         )
         return scm_view
 
 
+def retrieve_template_scm():
+    with open(os.path.join(template_path, "python_report_template.scm")) as f:
+        return f.read()
+
+
 def generate_sample_report_python():
-    with open(os.path.join(os.path.dirname(__file__), "report_example.py")) as f:
+    with open(os.path.join(template_path, "report_example.py")) as f:
         return f.read()
 
 
 def generate_sample_report_html():
-    with open(os.path.join(os.path.dirname(__file__), "report_example.html")) as f:
+    with open(os.path.join(template_path, "report_example.html")) as f:
         return f.read()
 
 
@@ -74,14 +80,20 @@ def report(options_default_section,
                 param.annotation.name = name
                 options.append(param.annotation)
 
-        def wrapped():
+        def wrapped(book_url):
             dct = {}
             input_options = sys.stdin.readlines()
             for option, option_meta in zip(input_options, options):
                 var, value = option.split("|")
                 dct[var] = option_meta.parse(value)
 
-            book_url = get_latest_file()
+            # convert path given by gnucash to URI usable by piecash
+            book_url = (book_url
+                        .replace("file://", "sqlite:///")
+                        # .replace("postgres://", "postgres:///")
+                        .replace("mysql://", "mysql+pymysql://")  # to use pymysql instead of
+                        )
+
             return f(book_url, **dct)
 
         wrapped.project = p
@@ -90,20 +102,29 @@ def report(options_default_section,
     return process_function
 
 
-def execute_report(generate_report):
+def output_trace_html(exc_info):
+    # report the trace in html output
+    mystdout = os.fdopen(sys.stdout.fileno(), 'w')
+    original_write = mystdout.write
+    original_write('<html><head><style>pre {font-family: arial;}</style></head><body>')
+
+    def wrapped_write(text):
+        text = "".join("<pre>{}</pre>".format(l) for l in text.split("\n"))
+        original_write(text)
+
+    mystdout.write = wrapped_write
+    traceback.print_exception(*exc_info, file=mystdout)
+    original_write("</body></html>")
+    mystdout.flush()
+
+
+
+def execute_report(generate_report, book_url):
     try:
-        s = generate_report()
+        s = generate_report(book_url)
         print(s)
+    except sqlalchemy.exc.DatabaseError as e:
+        print("File {} is not an sqlite file. Check that you saved your gnucash book with the sqlite3 data format.".format(book_url))
     except Exception as e:
-        # report the trace in html output
-        mystdout = os.fdopen(sys.stdout.fileno(), 'w')
-        original_write = mystdout.write
-        original_write('<html><head><style>pre {font-family: arial;}</style></head><body>')
-
-        def wrapped_write(text):
-            text = "".join("<pre>{}</pre>".format(l) for l in text.split("\n"))
-            original_write(text)
-
-        mystdout.write = wrapped_write
-        traceback.print_exc(file=mystdout)
-        original_write("</body></html>")
+        exc_info = sys.exc_info()
+        output_trace_html(exc_info)

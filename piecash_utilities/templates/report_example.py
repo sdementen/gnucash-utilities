@@ -1,8 +1,7 @@
 import os
-import traceback
+import sys
 
 import jinja2
-import sys
 
 from piecash_utilities.report import report, RangeOption, DateOption, StringOption, execute_report
 
@@ -37,9 +36,12 @@ def generate_report(
             default_value=3)
 ):
     import piecash
-    with piecash.open_book(book_url, readonly=True, open_if_lock=True) as b:
+
+    with piecash.open_book(uri_conn=book_url, readonly=True, open_if_lock=True) as b:
+
         tpl_name = os.path.basename(__file__).replace("py", "html")
         env = jinja2.Environment(loader=jinja2.PackageLoader(__name__, '.'))
+
         return env.get_template(tpl_name).render(
             enumerate=enumerate,
             list=list,
@@ -48,6 +50,5 @@ def generate_report(
         )
 
 
-
 if __name__ == '__main__':
-    execute_report(generate_report)
+    execute_report(generate_report, sys.argv[1])

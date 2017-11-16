@@ -5,11 +5,11 @@ Information describing the project.
 """
 
 # The package name, which is also the "UNIX name" for the project.
-package = 'piecash_utilities'
-project = "Set of script leveraging piecash"
+package = 'gnucash-utilities'
+project = "Set of python scripts to work with GnuCash books"
 project_no_spaces = project.replace(' ', '')
-version = '0.0.3'
-description = 'Set of script leveraging piecash.'
+version = '0.1.5'
+description = 'Set of python scripts to work with GnuCash books.'
 authors = ['sdementen']
 authors_string = ', '.join(authors)
 emails = ['sdementen@gmail.com']
