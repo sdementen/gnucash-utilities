@@ -62,7 +62,7 @@
     (define (start-program)
       (set! program (gnc-spawn-process-async
                      (list {{python_interpreter}}
-                           (gnc-build-dotgnucash-path "{{ project.python_script }}")
+                           (gnc-build-dotgnucash-path "{{ project.python_script.replace('\\', '//') }}")
                            (qof-session-get-url (gnc-get-current-session)))
                      #t)))
 

@@ -1,9 +1,9 @@
+#!/usr/bin/env python
 """
 The reports, written in Python, are expected to be located in the .gnucash 
 user directory:
 c:\\users\\<your account>\\.gnucash\\report_<report name>\\report_<report name>.py
 """
-#!/usr/bin/env python
 import glob
 import os
 import sys
@@ -50,7 +50,8 @@ def main():
                 f.write(scm_view)
             
             #report_path = os.path.join(name, scm_name)
-            report_path = name + "//" + scm_name
+            #report_path = name + "//" + scm_name
+            report_path = os.path.join(name, scm_name).replace("\\", "//")
             lines_report.append('(load (gnc-build-dotgnucash-path "{scm_name}"))'.format(scm_name=report_path))
 
     update_config_user(lines_report)
