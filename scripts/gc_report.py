@@ -10,10 +10,12 @@ import sys
 
 from piecash_utilities import update_config_user, get_user_config_path
 
-if sys.version_info >= (3,0):
+if sys.version_info >= (3, 0):
     import importlib
 
     def load_module(file_path):
+        """
+        """
         return importlib.machinery.SourceFileLoader("mod", file_path).load_module()
 else:
     import imp
@@ -22,6 +24,10 @@ else:
         return imp.load_source("mod", file_path)
 
 def main():
+    """
+    Entry point.
+    """
+    # List of reports to load. Stored in config.user file.
     lines_report = []
     user_path = get_user_config_path()
     print("Checking for reports in " + user_path)
