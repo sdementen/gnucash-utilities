@@ -1,19 +1,21 @@
+#!/usr/bin/env python
 """
 The reports, written in Python, are expected to be located in the .gnucash 
 user directory:
 c:\\users\\<your account>\\.gnucash\\report_<report name>\\report_<report name>.py
 """
-#!/usr/bin/env python
 import glob
 import os
 import sys
 
 from piecash_utilities import update_config_user, get_user_config_path
 
-if sys.version_info >= (3,0):
+if sys.version_info >= (3, 0):
     import importlib
 
     def load_module(file_path):
+        """
+        """
         return importlib.machinery.SourceFileLoader("mod", file_path).load_module()
 else:
     import imp
@@ -22,6 +24,10 @@ else:
         return imp.load_source("mod", file_path)
 
 def main():
+    """
+    Entry point.
+    """
+    # List of reports to load. Stored in config.user file.
     lines_report = []
     user_path = get_user_config_path()
     print("Checking for reports in " + user_path)
@@ -48,7 +54,11 @@ def main():
             print("generate", name)
             with open(os.path.join(user_path, name, scm_name), "w") as f:
                 f.write(scm_view)
-            lines_report.append('(load (gnc-build-dotgnucash-path "{scm_name}"))'.format(scm_name=os.path.join(name, scm_name)))
+            
+            #report_path = os.path.join(name, scm_name)
+            #report_path = name + "//" + scm_name
+            report_path = os.path.join(name, scm_name).replace("\\", "//")
+            lines_report.append('(load (gnc-build-dotgnucash-path "{scm_name}"))'.format(scm_name=report_path))
 
     update_config_user(lines_report)
 

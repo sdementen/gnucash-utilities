@@ -33,6 +33,8 @@ class Report:
 
     @property
     def guid(self):
+        """
+        """
         return hashlib.sha224("{}-{}".format(self.name, self.title).encode('utf-8')).hexdigest()
 
     def generate_scm(self):
@@ -45,6 +47,8 @@ class Report:
 
 
 def retrieve_template_scm():
+    """
+    """
     with open(os.path.join(template_path, "python_report_template.scm")) as f:
         return f.read()
 
