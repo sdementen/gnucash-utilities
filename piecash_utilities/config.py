@@ -1,5 +1,4 @@
 import os
-import sys
 
 
 # def get_latest_file():
@@ -29,10 +28,19 @@ import sys
 def get_user_config_path():
     from os.path import expanduser
     home = expanduser("~")
-    if sys.platform.startswith("win") or sys.platform.startswith("linux"):
-        return os.path.join(home, ".gnucash")
-    else:
-        raise NotImplemented("not yet implemented for sys.platform = '{}'".format(sys.platform))
+
+    potential_paths = [
+        os.path.join(home, "AppData", "Roaming", "GnuCash"),
+        os.path.join(home, "AppData", "Local", "GnuCash"),
+        os.path.join(home, ".gnucash"),
+    ]
+
+    for p in potential_paths:
+        if os.path.exists(p):
+            return p
+
+    raise FileNotFoundError("Could not not found the GnuCash user folder after having looked in:\n"
+                            "{}".format("\n".join(potential_paths)))
 
 
 def update_config_user(lines, separator=";; lines automatically added\n;; everything below this line will be scraped"):
