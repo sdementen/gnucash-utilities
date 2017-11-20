@@ -4,6 +4,7 @@ import os
 import sys
 import traceback
 
+import piecash
 import sqlalchemy
 
 from .options import Option
@@ -82,12 +83,6 @@ def report(options_default_section,
                 options.append(param.annotation)
 
         def wrapped(book_url, input_options):
-            dct = {}
-            #input_options = sys.stdin.readlines()
-            for option, option_meta in zip(input_options, options):
-                var, value = option.split("|")
-                dct[var] = option_meta.parse(value)
-
             # convert path given by gnucash to URI usable by piecash
             book_url = (book_url
                         .replace("file://", "sqlite:///")
@@ -95,7 +90,16 @@ def report(options_default_section,
                         .replace("mysql://", "mysql+pymysql://")  # to use pymysql instead of
                         )
 
-            return f(book_url, **dct)
+            with piecash.open_book(uri_conn=book_url, readonly=True, open_if_lock=True) as book:
+
+                dct = {}
+                #input_options = sys.stdin.readlines()
+                for option, option_meta in zip(input_options, options):
+                    var, value = option.split("|")
+                    dct[var] = option_meta.parse(value, book)
+
+
+                return f(book_url, **dct)
 
         wrapped.project = p
         return wrapped

@@ -2,6 +2,7 @@ import ast
 import datetime
 
 import jinja2
+from piecash import Commodity
 
 
 class Option:
@@ -27,10 +28,9 @@ class Option:
         pass
 
     def render_serialise(self):
-        return jinja2.Template("""
-            (op-value "{{option.section}}" "{{option.name}}")""").render(option=self)
+        return jinja2.Template("""(op-value "{{option.section}}" "{{option.name}}")""").render(option=self)
 
-    def parse(self, value):
+    def parse(self, value, book):
         return ast.literal_eval(value)
 
 
@@ -42,7 +42,7 @@ class DateOption(Option):
     def render_serialise(self):
         return jinja2.Template("""(cadr (op-value "{{option.section}}" "{{option.name}}"))""").render(option=self)
 
-    def parse(self, value):
+    def parse(self, value, book):
         return datetime.datetime.fromtimestamp(ast.literal_eval(value))
 
     def render_scheme(self):
@@ -91,5 +91,29 @@ class StringOption(Option):
       ))
         """).render(option=self)
 
-    def parse(self, value):
+    def parse(self, value, book):
         return value
+
+class CommodityOption(Option):
+    def __init__(self, **kwargs):
+        super(CommodityOption, self).__init__(type="gnc:make-commodity-option",
+                                              **kwargs)
+
+    def render_scheme(self):
+        return jinja2.Template("""    (add-option
+       ({{ option.type }}
+      (N_ "{{option.section}}") (N_ "{{option.name}}")
+      "{{option.sort_tag}}" (N_ "{{option.documentation_string}}")
+      {{option.default_value}}  ;; default
+      ))
+        """).render(option=self)
+
+    def render_serialise(self):
+        return jinja2.Template(
+            '(string-append (gnc-commodity-get-namespace (op-value "{{option.section}}" "{{option.name}}"))'
+            ' ">" '
+            '(gnc-commodity-get-mnemonic (op-value "{{option.section}}" "{{option.name}}")))').render(option=self)
+
+    def parse(self, value, book):
+        namespace, mnemonic = value.strip('"').split(">")
+        return book.commodities(namespace=namespace, mnemonic=mnemonic)
