@@ -9,9 +9,15 @@ app = flask.Flask(__name__)
 
 @app.route("/",methods=["GET","POST"])
 def index():
-    print(flask.request.data)
+    print(flask.request.data.decode("UTF-8"))
     print(flask.request.headers)
-    return flask.Response("<html><body>ok all</body></html>",
+    report = flask.request.headers["Gnc-Report"]
+    inputs = flask.request.data.decode("UTF-8").split("\n")
+    sys.path.append(inputs[1])
+    mod = importlib.import_module("{report}.{report}".format(report=report))
+    res = mod.generate_report(inputs[0], inputs[2:])
+
+    return flask.Response(res,
                        mimetype='text/html'   )
 app.run(debug=True, port=8001)
 fdfdsfds

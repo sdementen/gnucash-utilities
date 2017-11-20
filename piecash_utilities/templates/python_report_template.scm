@@ -63,47 +63,24 @@
         (from-child #f)
         (to-child #f)
         )
-
-    (define (start-program)
-      (set! program (gnc-spawn-process-async
-                     (list {{python_interpreter}}
-                           (gnc-build-dotgnucash-path "{{ project.python_script }}")
-                           (qof-session-get-url (gnc-get-current-session)))
-                     #t)))
-
-    (define (read-port port)
-        (let iter ((result '()) (line ""))
-             (if (eof-object? line)
-                (string-concatenate-reverse/shared result)
-                (iter (cons line result) (read-line port 'concat)))))
-
     (define (get-sources)
           (let ((results #f))
-
-            (set! to-child (fdes->outport (gnc-process-get-fd program 0)))
-            (set! from-child (fdes->inport (gnc-process-get-fd program 1)))
             (catch
              #t
              (lambda ()
-
-                {% for option in project.options %}
-                (display "{{option.name}}"   to-child)
-                (display "|"   to-child)
-                (display {{ option.render_serialise() }}  to-child)
-
-                (display "\n"   to-child)
-                {% endfor %}
-
-               (force-output to-child)
-               (close-output-port to-child)
-               (set! results (read-port from-child))
                (call-with-values
             	    (lambda () (http-post "http://127.0.0.1:8001"
-                    #:body "hello me"
+                    #:body (string-concatenate (list
+                                (qof-session-get-url (gnc-get-current-session)) "\n"
+                                (gnc-build-userdata-path "") "\n"
+                                {% for option in project.options %}
+                                 "{{option.name}}" "|" (object->string {{ option.render_serialise() }}) "\n"
+                                {% endfor %}
+                    ))
                     #:headers (acons 'Accept-Content "text/plain"
                                (acons 'Accept "text/html"
-                               (acons 'gnc-report "report_boul.report_boul"
-                               (acons 'gnc-book "c:/foo" '()))))))
+                               (acons 'gnc-report "{{ project.python_script }}" '())))))
+;;                               (acons 'gnc-book "oo" '()))))))
 
                     (lambda (res-headers res-body)
 	                        (set! results res-body)))
@@ -112,16 +89,7 @@
              (lambda (key . args)
                key))))
 
-    (define (kill-program)
-      (if (not (null? program))
-          (gnc-detach-process program #t)))
-
-    ;; (setenv "PYTHONPATH" "C:\\Users\\gfj138\\.gnucash")
-
-    (dynamic-wind
-        start-program
-        get-sources
-        kill-program)))
+    (get-sources)))
 
 
 ;; Here we define the actual report with gnc:define-report

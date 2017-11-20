@@ -30,14 +30,14 @@ def get_user_config_path():
     home = expanduser("~")
 
     potential_paths = [
-        os.path.join(home, "AppData", "Roaming", "GnuCash"),
-        os.path.join(home, "AppData", "Local", "GnuCash"),
-        os.path.join(home, ".gnucash"),
+        (os.path.join(home, "AppData", "Roaming", "GnuCash"), "2.7"),
+        (os.path.join(home, "AppData", "Local", "GnuCash"), "2.7"),
+        (os.path.join(home, ".gnucash"), "2.6"),
     ]
 
-    for p in potential_paths:
+    for p, v in potential_paths:
         if os.path.exists(p):
-            return p
+            return p, v
 
     raise FileNotFoundError("Could not not found the GnuCash user folder after having looked in:\n"
                             "{}".format("\n".join(potential_paths)))
@@ -47,7 +47,8 @@ def update_config_user(lines, separator=";; lines automatically added\n;; everyt
     # add the list of lines to the end of the config.user file
     # separating the original content and the new content
     # through a separator
-    path = os.path.join(get_user_config_path(), "config.user")
+    user_config_path, version= get_user_config_path()
+    path = os.path.join(user_config_path, "config.user")
     if os.path.exists(path):
         with open(path, "r") as fin:
             original = fin.read()

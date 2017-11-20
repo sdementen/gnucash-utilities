@@ -39,7 +39,8 @@ class Report:
         import jinja2
         scm_view = jinja2.Template(retrieve_template_scm()).render(
             project=self,
-            python_interpreter='"' + repr("'" + sys.executable)[2:].replace("python.exe", "pythonw.exe"),
+            # todo: replace by pythonw.exe in non dev version
+            python_interpreter='"' + repr("'" + sys.executable)[2:].replace("python.exe", "python.exe"),
         )
         return scm_view
 
@@ -80,9 +81,9 @@ def report(options_default_section,
                 param.annotation.name = name
                 options.append(param.annotation)
 
-        def wrapped(book_url):
+        def wrapped(book_url, input_options):
             dct = {}
-            input_options = sys.stdin.readlines()
+            #input_options = sys.stdin.readlines()
             for option, option_meta in zip(input_options, options):
                 var, value = option.split("|")
                 dct[var] = option_meta.parse(value)
