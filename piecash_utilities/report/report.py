@@ -89,6 +89,7 @@ def report(options_default_section,
 
             # convert path given by gnucash to URI usable by piecash
             book_url = (book_url
+                        .replace("file:///", "sqlite:///")
                         .replace("file://", "sqlite:///")
                         # .replace("postgres://", "postgres:///")
                         .replace("mysql://", "mysql+pymysql://")  # to use pymysql instead of
