@@ -3,7 +3,7 @@
 
 # Testing
 pytest==2.5.1
-py==1.4.19
+py==1.10.0
 tox
 psycopg2
 PyMySQL
